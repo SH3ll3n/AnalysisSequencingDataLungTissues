@@ -1,4 +1,4 @@
-# Analyze_sequencing_data_collected_from_healthy_lung_tissues_and_tumoral_lung_tissues.
+# Analyze sequencing data collected from healthy lung tissues and tumoral lung tissues
 
 # What is it
 This analyses of collected data is an educational university project 

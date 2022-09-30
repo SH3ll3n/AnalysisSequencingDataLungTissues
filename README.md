@@ -4,7 +4,7 @@
 This analyses of collected data is an educational university project 
 to understand which effect do air pollutants have on the investigated tissue (lung),
 how do healthy and treated tissues respond to pollutant exposure and which pollutant 
-agent impacts the tissue the most?
+agent impacts the tissue the most.
 
 # How to install
 For installation you need to use R language and install the libraries on your PC.

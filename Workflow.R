@@ -37,11 +37,11 @@ result<-DESeqDataSetFromMatrix(countData = count_matrix, colData = coldatafinal,
 #or only a single count across all samples
 nrow(result)
 
-#Basic filtering, =0 is not expressed in any samples
+#Basic filtering, (if equal to 0 is not expressed in any samples)
 result <- result[rowSums(counts(result)) > 1, ]
 nrow(result)
 
-#Strict filtering, per ogni riga sommo quanti valori sono > 10, li sommo e vedo se > 4
+#Strict filtering, for each row I sum how many quanti values are > 10, I sum and I check if > 4
 #at least 5 samples in which the gene are expressed more than 10
 keep <- apply(counts(result), 1, function(x){
   sum(x>10) > 4
@@ -50,15 +50,13 @@ table(keep)
 
 result <- result[keep,]
 
-
 #stabilize the variance across the mean
-#remove low expression / big variance, not depend from the treatment -> more errors
 
-#first way, vcv
+#first way
 rld <- rlog(result, blind=FALSE)
 head(assay(rld), 3)
 
-#second way, filtering more, more data
+#second way, filtering more
 vsd <- vst(result, blind=FALSE)
 head(assay(vsd), 3)
 
@@ -84,6 +82,7 @@ plotPCA(rld, intgroup = c("Group", "Condition"))
 plotPCA(rld, intgroup = c("Group"))
 plotPCA(rld, intgroup = c("Condition"))
 
+## Other types of plot that you can use
 ## MDS plot
 ## t-SNE plot
 
@@ -120,7 +119,7 @@ summary(res.05)
 resLFC1 <- results(dds, lfcThreshold=1)
 table(resLFC1$padj < 0.1)
 
-#compair 2 cell lines
+##compair 2 cell lines
 #In general, the results for a comparison of any two levels of a variable can be extracted using the contrast argument to results.
 results(dds, contrast=c("Group", "B", "C"))
 
@@ -163,27 +162,27 @@ hist(res$pvalue[res$baseMean > 1], breaks=0:20/20, col="grey50", border="white")
 ## P-value distribution
 hist(res$pvalue, col = "royalblue4")
 
-# remove filtered out genes by independent filtering,
-# they have NA adj. pvals
+#remove filtered out genes by independent filtering,
+#they have NA adj. pvals
 res <- res[ !is.na(res$padj),] 
 
-# remove genes with NA pvals (outliers)
+#remove genes with NA pvals (outliers)
 res <- res[ !is.na(res$pvalue), ]
 
-# remove adjsuted pvalues, since we add the fdrtool results later on
+#remove adjsuted pvalues, since we add the fdrtool results later on
 res <- res[, -which(names(res) == "padj")]
 
 #we can re-estimate the variance inside the model and correct the p-value distribution.
 # use z-scores as input to FDRtool to re-estimate the p-value
 res_fdr <- fdrtool(res$stat, statistic= "normal")
 
-# add values to the results data frame, also ad new BH- adjusted p-values
+#add values to the results data frame, also ad new BH- adjusted p-values
 res[,"padj"] <- p.adjust(res_fdr$pval, method = "BH")
 
-# plot correct p-value distribution 
+#plot correct p-value distribution 
 hist(res_fdr$pval, col = "royalblue4", xlab = "CORRECTED p-values")
 
-## Gene clustering
+##Gene clustering
 topVarGenes <- head(order(rowVars(assay(rld)),decreasing=TRUE),20) #rowVars takes the variance of each gene  among the samples, in each row.
 
 mat <- assay(rld)[topVarGenes, ]
@@ -200,7 +199,7 @@ pheatmap(mat, annotation_col=df)
 library("AnnotationDbi")
 library("org.Hs.eg.db")
 
-#togliere la roba dopo il punto
+#this is to remove informations after the point, we don't need them
 
 j<-row.names(res)
 
@@ -210,7 +209,6 @@ remove_upgrades <- function(j) {
 
 o<-sapply(j,remove_upgrades)
 names(o)<-NULL
-
 
 res$symbol <- mapIds(org.Hs.eg.db,
                      keys=o,
